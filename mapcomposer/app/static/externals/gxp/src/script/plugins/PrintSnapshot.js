@@ -41,6 +41,11 @@ gxp.plugins.PrintSnapshot = Ext.extend(gxp.plugins.Tool, {
      */
     customParams: null,
     
+    /** api: config[fileName]
+     *  ``String``
+     *  The name of the file to download
+     */
+    fileName: "mapstore-snapshot.png",
     /** api: config[menuText]
      *  ``String``
      *  Text for print menu item (i18n).
@@ -84,7 +89,7 @@ gxp.plugins.PrintSnapshot = Ext.extend(gxp.plugins.Tool, {
     constructor: function(config) {
         gxp.plugins.PrintSnapshot.superclass.constructor.apply(this, arguments);
     },
-
+    
     /** api: method[addActions]
      */
     addActions: function() {
@@ -111,59 +116,45 @@ gxp.plugins.PrintSnapshot = Ext.extend(gxp.plugins.Tool, {
                 	var baseURL;
                 	var srsID;
                 	var unSupportedLayers = [];
-                	var supportedLayers = [];
-                	var vectorialLayers = [];
-                	var filters = [];
-                	for (var i = 0; i < layers.length; i++) {
-                		var layer = layers[i].clone();
-                		if (layer.getVisibility()) {
-                			if (layer.url && layer instanceof OpenLayers.Layer.WMS) {
-	                			supportedLayers.push(layer.params.LAYERS);
-	                			filters.push(layer.params.CQL_FILTER ? encodeURIComponent(layer.params.CQL_FILTER) : "INCLUDE");
-	                			
-	                			if (!baseURL) {
-	                				baseURL = layer.url;
-	                			}
-	                			
-	                			if (!srsID) {
-	                				srsID = layer.projection.projCode;
-	                			}
-	                		}
-
-                			else if (layer instanceof OpenLayers.Layer.Vector) {
-                				vectorialLayers.push(layer.clone());
-                			}
-                			
-                			else {
-                				unSupportedLayers.push(layer.clone());
-                			}
-                		}
-                	}
-                    
-                    var gsURL = baseURL + 
-                        "SERVICE=WMS" +
-                        "&LAYERS=" + supportedLayers.join(",") +
-                        "&FORMAT=" + encodeURIComponent("image/png") + 
-                        "&SRS=" + srsID +  
-                        "&VERSION=1.1.1" +
-                        "&REQUEST=GetMap" +
-                        "&BBOX=" + encodeURIComponent(extent.toBBOX())+
-                        "&WIDTH=" + width +
-                        "&HEIGHT=" + height +
-                        "&CQL_FILTER=" + filters.join(";");
-						
-                	var mHost = me.service.split("/");
-					
-                	var img = new Image();
+                    var supportedLayers = [];
+                    var vectorialLayers = [];
+                    var filters = [];
+                    var gsURL ="";
+                    //find supported, vector and unsupported layers
+                    for (var i = 0; i < layers.length; i++) {
+                        var layer = layers[i].clone();
+                        if (layer.getVisibility()) {
+                            if (this.checkValidWMSLayer(layer)) {
+                                supportedLayers.push(layer.params.LAYERS);
+                                filters.push(layer.params.CQL_FILTER ? encodeURIComponent(layer.params.CQL_FILTER) : "INCLUDE");
+                                gsURL = layer.url;
+                            }
+                            //Vector layers in the sale 
+                            else if (layer instanceof OpenLayers.Layer.Vector) {
+                                vectorialLayers.push(layer.clone());
+                            }
+                            
+                            else {
+                                unSupportedLayers.push(layer.clone());
+                            }
+                        }
+                    }
                 	
-                	img.onload = function(){
+                    var chunks = me.createChunks(layers);
+                    var imgURLs = me.getImageURLs(chunks,map);
+                    var loaded = [];
+                    var sent = []; 
+                    //define the function to draw all the images 
+					var drawCanvas = function(loaded){
                     	//Draw
                     	canvas.width  = width;     // change if you have to add legend
                     	canvas.height = height;    // change if you have to add legend
                     	var ctx = canvas.getContext("2d");
 
                     	//WARNING: cross domain is not allowed 
-                    	ctx.drawImage(img,0, 0);
+                        for( var i = 0 ; i < loaded.length; i++) {
+                            ctx.drawImage(loaded[i],0, 0);
+                        }
 						
                     	//to avoid clear use another canvas and draw on the old after executing canvg
                     	var canvas2 = document.createElement("canvas");
@@ -197,66 +188,47 @@ gxp.plugins.PrintSnapshot = Ext.extend(gxp.plugins.Tool, {
 		    			// Save
                     	var canvasData = canvas.toDataURL("image/png;base64");
 	                    
-	                    var mUrl = me.service + "UploadCanvas";
-                	    	mUrl = mHost[2] == location.host ? mUrl : proxy + mUrl;
-							
-						Ext.Ajax.request({
-						    url: mUrl,
-						    method: "POST",
-						    headers:{
-						    	  'Content-Type' : 'application/upload'
-						    },
-						    params: canvasData,
-						    scope: this,
-						    success: function(response, opts){
-								if (response.readyState == 4 && response.status == 200){
-								    if(response.responseText && response.responseText.indexOf("\"success\":false") < 0){
-								        var fname = "mapstore-snapshot.png";
-								    
-								        var mUrl = me.service + "UploadCanvas";
-								            mUrl = mHost[2] == location.host ? mUrl + "?ID=" + response.responseText + "&fn=" + fname : proxy + encodeURIComponent(mUrl + "?ID=" + response.responseText + "&fn=" + fname);
-								        
-								        window.location.assign(mUrl);
-								        enableSaving = true;
-								    }else{
-								        // this error should go to failure
-								        Ext.Msg.show({
-								             title: me.printStapshotTitle,
-								             msg: me.generatingErrorMsg + " " + gxp.util.getResponseFailureServiceBoxMessage(response),
-								             width: 300,
-								             icon: Ext.MessageBox.ERROR
-								        });
-								    }
-								}else if (response.status != 200){
-									Ext.Msg.show({
-										 title: 'Print Snapshot',
-										 msg: this.serverErrorMsg,
-										 width: 300,
-										 icon: Ext.MessageBox.ERROR
-									});
-								}					
-						    },
-						    failure:  function(response, opts){
-								Ext.Msg.show({
-									 title: me.printStapshotTitle,
-									 msg: me.generatingErrorMsg + " " + gxp.util.getResponseFailureServiceBoxMessage(response),
-									 width: 300,
-									 icon: Ext.MessageBox.ERROR
-								});
-						    }
-						});
+	                    me.uploadCanvas(canvasData);
                     };
+                    for( var i = 0 ; i < imgURLs.length; i++){
+                        var img = new Image();
+                        
+                        img.onload = function(){
+                            loaded.push(img);
+                            if(loaded.length == sent.length){
+                                drawCanvas(loaded);
+                            }
+                        }
+                    }
+                    if (supportedLayers.length > 0){
+                        //create all the images
+                        for(var i= 0 ; i<imgURLs.length; i++){
+                           var img = new Image();
+                           sent.push(img);
+                                              
+                        }
+                        //load all images
+                        for(var i= 0 ; i<sent.length; i++){
+                           sent[i].src = proxy + encodeURIComponent(gsURL);
+                                              
+                        }
+                                
+                    }else {
+                        Ext.Msg.show({
+                             title: this.printStapshotTitle,
+                             msg: this.noSupportedLayersErrorMsg,
+                             width: 300,
+                             icon: Ext.MessageBox.ERROR
+                        });
+                    }
+                	
                     
-                    if (supportedLayers.length > 0)
-                    	img.src = proxy + encodeURIComponent(gsURL);
-                   	else {
-                   		Ext.Msg.show({
-			                 title: this.printStapshotTitle,
-			                 msg: this.noSupportedLayersErrorMsg,
-			                 width: 300,
-			                 icon: Ext.MessageBox.ERROR
-			            });
-                   	}
+                    
+                       
+                    
+    
+    
+    
                 },
                 scope: this,
                 listeners: {
@@ -267,7 +239,143 @@ gxp.plugins.PrintSnapshot = Ext.extend(gxp.plugins.Tool, {
             }]);
             
 		return actions;
-    }
+    },
+    /** api: method[createChunks]
+     * creates chunks of layers grouped by source. 
+     */
+    createChunks: function(layers) {
+        var ret= {};
+        
+        //create chunks
+        var wms ={};
+        var chunks = [];
+        for (var i = 0; i < layers.length; i++) {
+            var current  = layers[i];
+            //if is a wms, add to the map of wmss
+            if(this.checkValidWMSLayer(current)){
+                if(current.url in wms){
+                    wms[current.url].push(current.clone());
+                }else{
+                    wms[current.url]=[];
+                    wms[current.url].push(current.clone());
+                    chunks.push[wms[current.url]];
+                }
+            } else {
+                //TODO other kind of sources
+            }
+            
+        }
+        return chunks;
+    
+    },
+    /** api: method[checkValidWMSLayer]
+     * check if is a WMS layer with url parameter
+     */
+    checkValidWMSLayer:function(layer){
+        return layer.url && layer instanceof OpenLayers.Layer.WMS;
+    
+    },
+    
+    /** api: method[getImgURLs]
+     *generate image urls
+     */
+    getImageURLs: function(chunks,map ){
+    
+        var urls = [];
+            for(var i=0; i<chunks.length; i++){
+                if(checkValidWMSLayer (chunks[i][0]) ){
+                    urls.push(this.createWMSImgURL(chunks[i],map));
+                }
+            }
+         return urls;
+    },
+    
+    /** api: method[createWMSImgURL]
+     *generate image urls for WMS Sources
+     */
+    createWMSImgURL:function ( array ,map ){
+        
+    
+        var extent = map.getExtent();
+        var layers =[];
+        var filters =[];
+        var srsID;
+        for (var i = 0; i<array.length; i++){
+            layers.push(layer.params.LAYERS);
+            filters.push(layer.params.CQL_FILTER ? encodeURIComponent(layer.params.CQL_FILTER) : "INCLUDE");
+            srsID = layer.projection.projCode;
+        }
+        var gsURL = baseURL + 
+                        "SERVICE=WMS" +
+                        "&LAYERS=" + layers.join(",") +
+                        "&FORMAT=" + encodeURIComponent("image/png") + 
+                        "&SRS=" + srsID +  
+                        "&VERSION=1.1.1" +
+                        "&REQUEST=GetMap" +
+                        "&BBOX=" + encodeURIComponent(extent.toBBOX())+
+                        "&WIDTH=" + width +
+                        "&HEIGHT=" + height +
+                        "&CQL_FILTER=" + filters.join(";");
+                        
+        return gsURL;
+						
+    
+    },
+    /** api: method[uploadCanvas]
+     * upload base64 ecoded canvas data to servicebox and finalize with download response.
+     */
+    uploadCanvas: function (canvasData){
+                var mHost = this.service.split("/");
+                var mUrl = this.service + "UploadCanvas";
+                    mUrl = mHost[2] == location.host ? mUrl : proxy + mUrl;
+                    
+                Ext.Ajax.request({
+                    url: mUrl,
+                    method: "POST",
+                    headers:{
+                          'Content-Type' : 'application/upload'
+                    },
+                    params: canvasData,
+                    scope: this,
+                    success: function(response, opts){
+                        if (response.readyState == 4 && response.status == 200){
+                            if(response.responseText && response.responseText.indexOf("\"success\":false") < 0){
+                                var fname = this.fileName;
+                            
+                                var mUrl = this.service + "UploadCanvas";
+                                    mUrl = mHost[2] == location.host ? mUrl + "?ID=" + response.responseText + "&fn=" + fname : proxy + encodeURIComponent(mUrl + "?ID=" + response.responseText + "&fn=" + fname);
+                                
+                                window.location.assign(mUrl);
+                                enableSaving = true;
+                            }else{
+                                // this error should go to failure
+                                Ext.Msg.show({
+                                     title: this.printStapshotTitle,
+                                     msg: this.generatingErrorMsg + " " + gxp.util.getResponseFailureServiceBoxMessage(response),
+                                     width: 300,
+                                     icon: Ext.MessageBox.ERROR
+                                });
+                            }
+                        }else if (response.status != 200){
+                            Ext.Msg.show({
+                                 title: 'Print Snapshot',
+                                 msg: this.serverErrorMsg,
+                                 width: 300,
+                                 icon: Ext.MessageBox.ERROR
+                            });
+                        }					
+                    },
+                    failure:  function(response, opts){
+                        Ext.Msg.show({
+                             title: this.printStapshotTitle,
+                             msg: this.generatingErrorMsg + " " + gxp.util.getResponseFailureServiceBoxMessage(response),
+                             width: 300,
+                             icon: Ext.MessageBox.ERROR
+                        });
+                    }
+                });
+            }
+    
 });
 
 Ext.preg(gxp.plugins.PrintSnapshot.prototype.ptype, gxp.plugins.PrintSnapshot);
