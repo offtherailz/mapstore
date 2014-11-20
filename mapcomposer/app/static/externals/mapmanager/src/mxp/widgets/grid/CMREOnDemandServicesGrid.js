@@ -204,108 +204,99 @@ mxp.widgets.CMREOnDemandServicesGrid = Ext.extend(Ext.grid.GridPanel, {
 					try {
 						//mainPanel.removeAll();
 						var serviceConfigurationPanel;
-
-						if (mainPanel.items.containsKey("CMREOnDemandServiceInputPanel")) {
-							serviceConfigurationPanel = mainPanel.items.get("CMREOnDemandServiceInputPanel");
+                        var itemId = 'CMREOnDemandServiceInputPanel';
+						if (mainPanel.items.containsKey(itemId)) {
+							serviceConfigurationPanel = mainPanel.items.get(itemId);
 						}
 
 						if (serviceConfigurationPanel) {
 							mainPanel.remove(serviceConfigurationPanel);
 						}
-
-						var mapPanel = new GeoExt.MapPanel({
-							region : "center",
-							map : {
-								controls : [
-									new OpenLayers.Control.Navigation(), 
-									new OpenLayers.Control.ScaleLine(), 
-									new OpenLayers.Control.MousePosition({
-										prefix : '<strong>'+me.displayProjection+'</strong> coordinates: ',
-										separator : ' | ',
-										numDigits : 4,
-										emptyString : 'Mouse is not over map.'
-									})],
-								wrapDateLine: true,
-								maxExtent : me.bounds,
-								maxZoomLevel : me.maxZoomLevel,
-								zoom : me.zoom,
-								displayProjection : me.displayProjection,
-								projection : me.projection,
-								units : me.units,
-								center : me.center
-							},
-							layers : [
-								new OpenLayers.Layer.OSM("OpenStreetMap", 
-									[
-										"http://a.tile.openstreetmap.org/${z}/${x}/${y}.png", 
-								 		"http://b.tile.openstreetmap.org/${z}/${x}/${y}.png", 
-								 		"http://c.tile.openstreetmap.org/${z}/${x}/${y}.png"
-								 	], 
-									OpenLayers.Util.applyDefaults({
-											attribution : "&copy; <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
-											type : "mapnik"
-									},
-									//options
-									{
-										projection : me.projection,
-										maxExtent : me.bounds
-										/*new OpenLayers.Bounds(
-										 -128 * 156543.0339,  -128 * 156543.0339,
-										128 * 156543.0339, 128 * 156543.0339
-										)*/,
-										//maxResolution: 19567.87923828125,//156543.03390625
-										numZoomLevels : me.numZoomLevels,
-										units : me.units,
-										buffer : 1,
-										transitionEffect : "resize",
-										tileOptions : {
-											crossOriginKeyword : null
-										}
-									})
-								)
-							],
-							extent : me.bounds,
-							items : [{
-								xtype : "gx_zoomslider",
-								vertical : true,
-								height : 100,
-								x : 10,
-								y : 20,
-								plugins : new GeoExt.ZoomSliderTip()
-							}]
-						});
-
-						mainPanel.add({
-							layout : 'border',
-							itemId : 'CMREOnDemandServiceInputPanel',
-							xtype : 'panel',
-							closable : true,
-							closeAction : 'close',
-							iconCls : 'nato_ic',
-							header : false,
-							deferredReneder : false,
-							viewConfig : {
-								forceFit : true
-							},
-							title : me.newServiceText + serviceName,
-							items : [{
-								xtype : 'mxp_cmre_ondemand_services_input_form',
-								tbar : null,
+                        
+						var mapPanel = new  GeoExplorer.Viewer({
+                             
+                             geoStoreBaseURL: this.geoStoreBaseURL,
+                             disableLayerChooser: true,
+							 renderToTab: 'mainTabPanel',
+                             tools:[],
+                             viewerTools:[],
+                             portalConfig:{
+                                title: me.newServiceText + serviceName,
+                                closable : true,
+                                closeAction : 'close',
+                                itemId: itemId,
+                                iconCls : 'nato_ic',
+                                header : false,
+                                deferredReneder : false,
+                                hideMode: 'offsets',
+                                forceLayout: true
+                             },
+                             customPanels:[{
+								xtype : 'panel',
+                                layout:'fit',
 								osdi2ManagerRestURL : me.osdi2ManagerRestURL,
 								serviceId: serviceId,
 								serviceName: serviceName,
-								mapPanel : mapPanel,
 								region : 'west',
 								iconCls : 'nato_ic',
 								title : serviceName + " " + me.inputsText,
 								autoScroll : true,
 								width : 600,
-								ref : 'list',
+								ref : '../../inputForm',
 								collapsible : true,
 								auth : me.auth,
-								sm : null
-							}, mapPanel]
-						}).show();
+								sm : null,
+                                deferredReneder : false,
+                                hideMode: 'offsets',
+                                forceLayout: true,
+                                listeners:{
+                                    afterlayout: function(){
+                                        this.mapPanel = mapPanel.mapPanel;
+                                        this.add({
+                                            xtype : 'mxp_cmre_ondemand_services_input_form',
+                                            layout:'fit',
+                                            sdi2ManagerRestURL : me.osdi2ManagerRestURL,
+                                            serviceId: serviceId,
+								            serviceName: serviceName,
+                                            auth : me.auth,
+                                            mapPanel:mapPanel.mapPanel
+                                        });
+                                        
+                                    }
+                                },
+							}],
+                             region : "center",
+							 sources: serverConfig.gsSources || {
+                                
+                                osm: { 
+                                    "ptype": "gxp_osmsource"
+                                }
+                            },"map": {
+                                maxResolution:156543.03390625,
+                                numZoomLevels:20,
+                                "projection": "EPSG:900913",
+                                "units": "m",
+                                "center": [0,0],
+                                "zoom":3,
+                                "maxExtent": [
+                                    -20037508.34, -20037508.34,
+                                    20037508.34, 20037508.34
+                                ],
+                                "layers": [
+                                   {
+                                        "source": "osm",
+                                        "title": "Open Street Map",
+                                        "name": "mapnik",
+                                        "group": "background",
+                                       isBaseLayer:true
+                                    }
+                                ]
+                            }
+                            
+							
+						}, -1, false, false);
+                       
+						
 					} catch (e) {
 						// FIXME: some error here
 						console.log(e);
