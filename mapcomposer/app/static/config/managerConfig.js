@@ -1,4 +1,4 @@
-﻿{
+{
    "composerUrl":"",
    "socialUrl":"",
    "start":0,

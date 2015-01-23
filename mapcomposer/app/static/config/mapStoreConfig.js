@@ -62,7 +62,12 @@
 		}
 	},
     "tab":true,
-    
+
+	"loadingPanel": {
+		"width": 100,
+		"height": 100,
+		"center": true
+	},
 	"map": {
 		"projection": "EPSG:900913",
 		"units": "m",
@@ -100,26 +105,16 @@
 				"source": "bing",
 				"title": "Bing Aerial With Labels",
 				"name": "AerialWithLabels",
-				"group": "background",
-                "visibility": false
+				"group": "background"
 			},{
-				"source": "google",
-				"title": "Google Terrain",
-				"name": "TERRAIN",
+				"source": "ol",
 				"group": "background",
-                "visibility": false
-			},{
-				"source": "google",
-				"title": "Google Hybrid",
-				"name": "HYBRID",
-				"group": "background",
-                "visibility": false
-			},{
-				"source": "google",
-				"title": "Google Roadmap",
-				"name": "ROADMAP",
-				"group": "background",
-                "visibility": false
+				"fixed": true,
+				"type": "OpenLayers.Layer",
+				"visibility": false,
+				"args": [
+					"None", {"visibility": false}
+				]
 			}
 		]
 	},
@@ -138,7 +133,7 @@
 			"ptype": "gxp_addlayer",
 			"showCapabilitiesGrid": true,
 			"useEvents": false,
-			"showReport": false,
+			"showReport": "never",
 			"directAddLayer": false,
 			"id": "addlayer"
 		}, {

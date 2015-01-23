@@ -56,14 +56,14 @@ GeoExt.Lang.add("fr", {
     "gxp.plugins.AddLayers.prototype": {
         addActionMenuText: "Ajouter des couches",
         addActionTip: "Ajouter des couches",
-        addServerText: "Ajouter un nouveau serveur",
+        addServerText: "Ajouter Serveur",
         addButtonText: "Ajouter des couches",
         untitledText: "Sans titre",
         addLayerSourceErrorText: "Erreur d’obtention des capacités WMS ({msg}).\nVeuillez vérifier l`URL et essayer à nouveau.",
         availableLayersText: "Couches disponibles",
         expanderTemplateText: "<p><b>Résumé:</b> {abstract}</p>",
         panelTitleText: "Titre",
-        layerSelectionText: "Visualiser les données disponibles depuis:",
+        layerSelectionText: "Visualiser les données disponibles:",
         doneText: "Terminé",
         removeFilterText: "Effacer le filtre", 
         filterEmptyText: "Filtre",
@@ -220,11 +220,37 @@ GeoExt.Lang.add("fr", {
     },  
 
     "gxp.NewSourceWindow.prototype": {
-        title: "Ajouter un nouveau serveur...",
+        title: "Ajouter un serveur",
         cancelText: "Annuler",
         addServerText: "Ajouter un serveur",
         invalidURLText: "Saisir l’URL d’un serveur WMS(par ex. : http://example.com/geoserver/wms)",
-        contactingServerText: "Contact du serveur en cours"
+        contactingServerText: "Contact du serveur en cours",
+		sourceTypeLabel: "Type",
+		advancedOptionsTitle: "Advanced Options",
+		generalTabTitle: "General",
+		titleLabel: "Title",
+		versionLabel: "Version (*)",
+		authParamLabel: "Auth Param",
+		minXLabel: "MinX",
+		minYLabel: "MinY",
+		maxXLabel: "MaxX",
+		maxYLabel: "MaxY",
+		paramsTabTitle: "Params",
+		cacheTabTitle: "Cache",
+		addParamButtonText: "Add",
+		propNameLabel: "Name",
+		propValueLabel: "Value",
+		paramsWinTitle: "Params Options",
+		okButtonText: "Ok",
+		addPropDialogTitle: "Add Property",
+		addPropDialogMsg: "Property name or his value are not valid",
+		cancelButtonText: "Cancel",
+		removeButtonText: "Remove",
+		removePropDialogTitle: "Remove Property",
+		removePropDialogMsg: "This property cannot be removed: ",
+		newSourceDialogTitle: "New Source",
+		newSourceDialogMsg: "Some source selected properties are invalid.",
+		mandatoryLabelText: "All fields marked with (*) are mandatory."
     },  
 
     "gxp.ScaleOverlay.prototype": { 
@@ -610,7 +636,8 @@ GeoExt.Lang.add("fr", {
 		previewText: "Prévisualiser",				
 		embedCodeTitle: "Intégrer le code",
 		embedURL: "URL directe",		
-		urlLabel: "URL",
+		embedUrlLabel: "EMBED",
+		composerUrlLabel: "FULL",
 		showMapTooltip: "Afficher dans une nouvelle fenêtre",
         loadMapText: "Charger cette carte (installer l’application d’abord)", 
         downloadAppText: "Installer l'application", 
@@ -761,8 +788,10 @@ GeoExt.Lang.add("fr", {
 		rootNodeText: "Ressources importées",
 		serviceErrorTitle: "Erreur du Service",
 		tabTitle: "Importé",
-		layerNodeName: "Couches",
-		serviceNodeName: "Services"
+		layerNodeName: "Ressources",
+		waitMsg: "Chargement Des Ressources ...",
+		expandAllText: "Développer Tous Les Nœuds",
+		collapseAllText: "Réduire Tous Les Nœuds"
     },
 	
 	"gxp.plugins.SpatialSelectorQueryForm.prototype":{
@@ -800,7 +829,56 @@ GeoExt.Lang.add("fr", {
 	
 	"gxp.plugins.AdvancedSnappingAgent.prototype":{
         tooltipText: "Activer/Désactiver Engagement"
-    }  
+    },
+	
+    "gxp.PlaybackToolbar.prototype": {
+        playLabel: "Jouer",
+        playTooltip: "Jouer",
+        stopLabel: "Stop",
+        stopTooltip: "Stop",
+        fastforwardLabel: "FFWD",
+        fastforwardTooltip: "Lecture à double vitesse",
+        backLabel:'Arrière',
+        backTooltip:"Reculer d'une image",            
+        nextLabel: "Suivant",
+        nextTooltip: "Avancer d'une image",
+        resetLabel: "Remettre",
+        resetTooltip: "Réinitialiser",
+        loopLabel: "Boucle",
+        loopTooltip: "Continuellement en boucle l'animation",
+        normalTooltip: "Retour à la normale playback",
+        pauseLabel: "Pause",
+        pauseTooltip: "Pause"
+    },
+	
+    "gxp.PlaybackOptionsPanel.prototype": {
+        optionTitleTextS: "Options de date et heure",
+        rangeFieldsetText: "Intervalle de temps",
+        animationFieldsetText: "Options d'Animation",
+        startText: "Commencer",
+        endText: "Fin",
+        saveText: 'Sauver',
+        cancelText: 'Annuler',         
+        listOnlyText: "Utilisez Liste des valeurs exact uniquement",
+        stepText: "Étape animation",
+        unitsText: "Unités d'animation",
+        frameRateText:'Retard Animation (s)',        
+        noUnitsText: "Aligner sur la Liste Temps",
+        loopText: "Animation en boucle",
+        reverseText: "Inverser animation",
+        rangeChoiceText: "Choisissez la gamme pour le contrôle du temps",
+        rangedPlayChoiceText: "Playback Mode",
+        secondsText: 'Secondes', 
+        minutesText: 'Minutes', 
+        hoursText: 'Heures', 
+        daysText: 'Journées', 
+        monthsText: 'Mois', 
+        yearsText: 'Ans'        
+    },
+	
+	"gxp.plugins.StaticPage.prototype": {
+        tabTitle: "Page Statique"
+    } 
 });
 
 

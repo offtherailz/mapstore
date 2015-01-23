@@ -53,7 +53,7 @@ GeoExt.Lang.add("de", {
     "gxp.plugins.AddLayers.prototype": {
         addActionMenuText: "Schicht hinzufügen",
         addActionTip: "Schicht hinzufügen",
-        addServerText: "Neuen Server hinzufügen",
+        addServerText: "Neuen Server",
         addButtonText: "Schichten hinzufügen",
         untitledText: "Ohne Überschrift",
         addLayerSourceErrorText: "Fehler beim finden der WMS capabilities ({msg}).\nBitte die Url kontrollieren und nochmals versuchen.",
@@ -242,11 +242,37 @@ GeoExt.Lang.add("de", {
     },
 
     "gxp.NewSourceWindow.prototype": {
-        title: "Neuen Server hinzufügen...",
+        title: "Neuen Server",
         cancelText: "Löschen",
         addServerText: "Server hinzufügen",
         invalidURLText: "Als WMS endpoint gültige Url eingeben (e.g. http://example.com/geoserver/wms)",
-        contactingServerText: "Verbindungsversuch zum Server..."
+        contactingServerText: "Verbindungsversuch zum Server...",
+		sourceTypeLabel: "Type",
+		advancedOptionsTitle: "Advanced Options",
+		generalTabTitle: "General",
+		titleLabel: "Title",
+		versionLabel: "Version (*)",
+		authParamLabel: "Auth Param",
+		minXLabel: "MinX",
+		minYLabel: "MinY",
+		maxXLabel: "MaxX",
+		maxYLabel: "MaxY",
+		paramsTabTitle: "Params",
+		cacheTabTitle: "Cache",
+		addParamButtonText: "Add",
+		propNameLabel: "Name",
+		propValueLabel: "Value",
+		paramsWinTitle: "Params Options",
+		okButtonText: "Ok",
+		addPropDialogTitle: "Add Property",
+		addPropDialogMsg: "Property name or his value are not valid",
+		cancelButtonText: "Cancel",
+		removeButtonText: "Remove",
+		removePropDialogTitle: "Remove Property",
+		removePropDialogMsg: "This property cannot be removed: ",
+		newSourceDialogTitle: "New Source",
+		newSourceDialogMsg: "Some source selected properties are invalid.",
+		mandatoryLabelText: "All fields marked with (*) are mandatory."
     },
 
     "gxp.ScaleOverlay.prototype": { 
@@ -647,7 +673,8 @@ GeoExt.Lang.add("de", {
 		previewText: "Vorschau",				
 		embedCodeTitle: "Embed Code",
 		embedURL: "Direct URL",		
-		urlLabel: "URL",
+		embedUrlLabel: "EMBED",
+		composerUrlLabel: "FULL",
 		showMapTooltip: "In einem neuen Fenster anzeigen",
         loadMapText: "Load this Map (installieren Sie zuerst die Anwendung)", 
         downloadAppText: "Die Anwendung Installieren", 
@@ -798,8 +825,10 @@ GeoExt.Lang.add("de", {
 		rootNodeText: "Ressourcen Import",
 		serviceErrorTitle: "Dienstfehler",
 		tabTitle: "Importiert",
-		layerNodeName: "Levels",
-		serviceNodeName: "Service"
+		layerNodeName: "Ressourcen",
+		waitMsg: "Laden von Ressourcen ...",
+		expandAllText: "Alle Knoten Erweitern",
+		collapseAllText: "Alles Alle Knoten"
     },
 	
 	"gxp.plugins.SpatialSelectorQueryForm.prototype":{
@@ -824,5 +853,52 @@ GeoExt.Lang.add("de", {
 
 	"gxp.plugins.AdvancedSnappingAgent.prototype":{
         tooltipText: "Aktivieren/Deaktivieren Snapping"
+    },
+	
+    "gxp.PlaybackToolbar.prototype": {
+        playLabel: "Wiedergabe",
+        playTooltip: "Wiedergabe",
+        stopLabel: "Stopp",
+        stopTooltip: "Stopp",
+        fastforwardLabel: "FFWD",
+        fastforwardTooltip: "Double Speed​​-Wiedergabe",
+        backLabel:'Zurück',
+        backTooltip:'Zeichnen Sie ein Bild zurück',            
+        nextLabel: "Nächste",
+        nextTooltip: "Ein Bild vor",
+        loopLabel: "Schleife",
+        loopTooltip: "Stufenlos Schleife die Animation",
+        normalTooltip: "Rückkehr zur normalen Wiedergabe",
+        pauseLabel: "Pause",
+        pauseTooltip: "Pause"
+    },
+	
+    "gxp.PlaybackOptionsPanel.prototype": {
+        optionTitleText: "Datum & Zeit",
+        rangeFieldsetText: "Zeitbereich",
+        animationFieldsetText: "Animationsoptionen",
+        startText: "Starten",
+        endText: "Ende",
+        saveText: 'Sparen',
+        cancelText: 'Stornieren',         
+        listOnlyText: "Verwenden Sie Genaue Werte-Liste nur",
+        stepText: "Zeichentrick Schritt",
+        unitsText: "Zeichentrick-Einheiten",
+        frameRateText:'Zeichentrick-Verzögerung (s)',        
+        noUnitsText: "Snap To Zeitliste",
+        loopText: "Loop-Animation",
+        reverseText: "Reverse-Zeichentrick",
+        rangeChoiceText: "Wählen Sie den Bereich für die Zeitsteuerung",
+        rangedPlayChoiceText: "Wiedergabemodus",
+        secondsText: 'Sekunden', 
+        minutesText: 'Protokoll', 
+        hoursText: 'Stunden', 
+        daysText: 'Tage', 
+        monthsText: 'Monate', 
+        yearsText: 'Jahre'        
+    },
+	
+	"gxp.plugins.StaticPage.prototype": {
+        tabTitle: "Statische Seite"
     }  
 });
