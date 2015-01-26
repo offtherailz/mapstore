@@ -219,7 +219,7 @@
           "height": 330,
           "collapsed": true,
           "collapsible": true,
-		  "collapseMode":"mini",
+          "collapseMode":"mini",
           "header": true
       },{
           "xtype": "panel",
@@ -232,7 +232,6 @@
           "layout": "fit",
           "collapsed": false,
           "collapsible": true,
-		  "collapseMode":"mini",
           "header": true
       }
     ],
