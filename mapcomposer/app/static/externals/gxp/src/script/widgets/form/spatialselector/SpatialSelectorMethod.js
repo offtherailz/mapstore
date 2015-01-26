@@ -385,12 +385,12 @@ gxp.widgets.form.spatialselector.SpatialSelectorMethod = Ext.extend(Ext.Containe
 	 */
 	deactivate: function(){
 		this.reset();
-        if(this.distanceFieldset){
-		  this.distanceFieldset.hide();
-        }
-        if(this.geometryOperationFieldset){
-		  this.geometryOperationFieldset.collapse();
-        }
+		if(this.distanceFieldset){
+         		this.distanceFieldset.hide();
+		}
+		if(this.geometryOperationFieldset){
+	        	this.geometryOperationFieldset.collapse();
+		}
 		this.hide();		
 	},
 
