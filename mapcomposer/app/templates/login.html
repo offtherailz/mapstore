@@ -517,8 +517,10 @@
 							user: login.user
 						};
 						
-						sessionStorage["userDetails"] = Ext.util.JSON.encode(uDetails);							
-						initComposer();
+						sessionStorage["userDetails"] = Ext.util.JSON.encode(uDetails);
+                        window.location.reload();
+						/*
+                        initComposer();
 
 						app.on('ready',function(){
 							login.target = Ext.getCmp('paneltbar');
@@ -532,8 +534,9 @@
 								auth:login.token,
 								geoStoreBase : serverConfig.geoStoreBase
 							 });
-							 myAccount.addOutput();                        
+							 myAccount.addOutput();
 						});
+                        */
 					}
 				},
 				showLogout : function(){
@@ -580,7 +583,7 @@
 						auth: app.userDetails.token,
 						geoStoreBase : serverConfig.geoStoreBase
 					 });
-					 myAccount.addOutput();                        
+					 myAccount.addOutput();                     
 				});
 			}
 			
